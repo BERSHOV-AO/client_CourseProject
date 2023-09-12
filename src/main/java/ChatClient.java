@@ -4,10 +4,11 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class ChatClient {
-    private static final String SERVER_ADDRESS = "localhost"; // Адрес сервера
+   // private static final String SERVER_ADDRESS = "localhost"; // Адрес сервера
     private static final String SETTINGS_FILE = "C:\\СourseChat\\client_CourseProject\\settings.txt";
     private static final String LOG_FILE = "C:\\СourseChat\\client_CourseProject\\file.log";
     private int port;
+    private String serverAddress;
     private String clientName;
     private PrintWriter logWriter;
 
@@ -20,6 +21,7 @@ public class ChatClient {
     private void loadSettings() {
         try (Scanner scanner = new Scanner(new File(SETTINGS_FILE))) {
             port = Integer.parseInt(scanner.nextLine());
+            serverAddress = scanner.nextLine();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -31,7 +33,7 @@ public class ChatClient {
     }
 
     private void startClient() {
-        try (Socket socket = new Socket(SERVER_ADDRESS, port);
+        try (Socket socket = new Socket(serverAddress, port);
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
              Scanner scanner = new Scanner(System.in)) {
