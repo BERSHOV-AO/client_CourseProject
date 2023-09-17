@@ -4,21 +4,21 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class ChatClient {
-   // private static final String SERVER_ADDRESS = "localhost"; // Адрес сервера
-    private static final String SETTINGS_FILE = "C:\\СourseChat\\client_CourseProject\\settings.txt";
-    private static final String LOG_FILE = "C:\\СourseChat\\client_CourseProject\\file.log";
+    private static final String SETTINGS_FILE = "C:\\JavaCourseProject\\client_CourseProject\\settings.txt";
+    private static final String LOG_FILE = "C:\\JavaCourseProject\\client_CourseProject\\file.log";
     private int port;
     private String serverAddress;
     private String clientName;
     private PrintWriter logWriter;
+    private boolean isRunning = false;
 
     public ChatClient(String clientName) {
         this.clientName = clientName;
-        loadSettings();
-        startClient();
+        // loadSettings();
+        //  startClient();
     }
 
-    private void loadSettings() {
+    public void loadSettings() {
         try (Scanner scanner = new Scanner(new File(SETTINGS_FILE))) {
             port = Integer.parseInt(scanner.nextLine());
             serverAddress = scanner.nextLine();
@@ -27,16 +27,39 @@ public class ChatClient {
         }
     }
 
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public void setServerAddress(String serverAddress) {
+        this.serverAddress = serverAddress;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public String getServerAddress() {
+        return serverAddress;
+    }
+
+    public boolean getTsRunning() {
+        return isRunning;
+    }
+
+
     private String getCurrentTime() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return sdf.format(new Date());
     }
 
-    private void startClient() {
+    public void startClient() {
         try (Socket socket = new Socket(serverAddress, port);
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
              Scanner scanner = new Scanner(System.in)) {
+
+            isRunning = true;
 
             logWriter = new PrintWriter(new FileWriter(LOG_FILE, true), true);
 
@@ -46,10 +69,11 @@ public class ChatClient {
             Thread messageThread = new Thread(() -> {
                 String serverMessage;
                 try {
-
-                    while ((serverMessage = in.readLine()) != null) {
-                        System.out.println(serverMessage);
-                        logWriter.println(serverMessage); // запись в файл логирования
+                    if (isRunning == true) {
+                        while (!socket.isClosed() && isRunning == true && (serverMessage = in.readLine()) != null) {
+                            System.out.println(serverMessage);
+                            logWriter.println(serverMessage); // запись в файл логирования
+                        }
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -62,6 +86,15 @@ public class ChatClient {
                 // Запись сообщения в файл логирования
                 logWriter.println("[" + getCurrentTime() + "] " + clientName + ": " + clientMessage);
             }
+            isRunning = false;
+            // Выход из цикла, если получена команда "/exit"
+            out.println(clientMessage); // Отправляем команду "/exit" серверу
+            logWriter.println("[" + getCurrentTime() + "] " + clientName + ": " + clientMessage);
+
+            // Закрываем  сокет и другие ресурсы
+            messageThread.interrupt();
+            socket.close();
+            logWriter.close();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -72,6 +105,9 @@ public class ChatClient {
         System.out.print("Enter your name: ");
         Scanner scanner = new Scanner(System.in);
         String clientName = scanner.nextLine();
-        new ChatClient(clientName);
+        //new ChatClient(clientName);
+        ChatClient client = new ChatClient(clientName);
+        client.loadSettings();
+        client.startClient();
     }
 }
