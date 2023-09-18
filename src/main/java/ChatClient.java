@@ -14,8 +14,6 @@ public class ChatClient {
 
     public ChatClient(String clientName) {
         this.clientName = clientName;
-        // loadSettings();
-        //  startClient();
     }
 
     public void loadSettings() {
@@ -105,7 +103,6 @@ public class ChatClient {
         System.out.print("Enter your name: ");
         Scanner scanner = new Scanner(System.in);
         String clientName = scanner.nextLine();
-        //new ChatClient(clientName);
         ChatClient client = new ChatClient(clientName);
         client.loadSettings();
         client.startClient();
