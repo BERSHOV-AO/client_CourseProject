@@ -25,10 +25,6 @@ public class ChatClient {
         }
     }
 
-    public void setPort(int port) {
-        this.port = port;
-    }
-
     public void setServerAddress(String serverAddress) {
         this.serverAddress = serverAddress;
     }
@@ -45,7 +41,6 @@ public class ChatClient {
         return isRunning;
     }
 
-
     private String getCurrentTime() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         return sdf.format(new Date());
@@ -58,7 +53,6 @@ public class ChatClient {
              Scanner scanner = new Scanner(System.in)) {
 
             isRunning = true;
-
             logWriter = new PrintWriter(new FileWriter(LOG_FILE, true), true);
 
             out.println(clientName);

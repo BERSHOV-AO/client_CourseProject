@@ -18,9 +18,6 @@ public class ChatClientTest {
     private final PrintStream originalOut = System.out;
     private final PrintStream originalErr = System.out;
 
-    private static final String LOG_FILE = "C:\\JavaCourseProject\\client_CourseProject\\file.log";
-
-
     @Before
     public void setUpStream() {
         System.setOut(new PrintStream(outCounter));
