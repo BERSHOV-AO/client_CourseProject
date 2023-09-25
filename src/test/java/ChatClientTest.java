@@ -33,7 +33,6 @@ public class ChatClientTest {
     @Test
     public void testLoadSettings() {
         ChatClient client = new ChatClient("TestClient");
-        client.loadSettings();
         assertEquals(12345, client.getPort());
         assertEquals("localhost", client.getServerAddress());
     }

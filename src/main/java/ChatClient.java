@@ -4,8 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class ChatClient {
-    private static final String SETTINGS_FILE = "C:\\JavaCourseProject\\client_CourseProject\\settings.txt";
-    private static final String LOG_FILE = "C:\\JavaCourseProject\\client_CourseProject\\file.log";
+    private static final String SETTINGS_FILE = "settings.txt";
+    private static final String LOG_FILE = "file.log";
     private int port;
     private String serverAddress;
     private String clientName;
@@ -14,9 +14,14 @@ public class ChatClient {
 
     public ChatClient(String clientName) {
         this.clientName = clientName;
+        loadSettings();
     }
 
-    public void loadSettings() {
+    public void start() {
+        startClient();
+    }
+
+    private void loadSettings() {
         try (Scanner scanner = new Scanner(new File(SETTINGS_FILE))) {
             port = Integer.parseInt(scanner.nextLine());
             serverAddress = scanner.nextLine();
@@ -46,7 +51,7 @@ public class ChatClient {
         return sdf.format(new Date());
     }
 
-    public void startClient() {
+    private void startClient() {
         try (Socket socket = new Socket(serverAddress, port);
              BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
              PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
@@ -98,7 +103,6 @@ public class ChatClient {
         Scanner scanner = new Scanner(System.in);
         String clientName = scanner.nextLine();
         ChatClient client = new ChatClient(clientName);
-        client.loadSettings();
-        client.startClient();
+        client.start();
     }
 }
